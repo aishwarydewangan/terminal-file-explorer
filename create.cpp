@@ -18,7 +18,7 @@ void createFile(const char *name) {
 		ofstream outfile(name);
 		outfile.close();
 	} else {
-		cout << "\nFile already exists. Please check name!";
+		cout << "\nError: File already exists. Please check name!";
 	}
 }
 
