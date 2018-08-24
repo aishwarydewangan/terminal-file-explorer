@@ -15,7 +15,7 @@ bool isFileExists(const char *name) {
 }
 
 void deleteFile(const char *name) {
-	if(!isFileExists(name)) {
+	if(isFileExists(name)) {
 		if(remove(name) == 0)
 			cout << "\nFile Deleted Successfully";
 		else
@@ -25,13 +25,12 @@ void deleteFile(const char *name) {
 	}
 }
 
-void traverse(const char *dir) {
+void deleteDirectory(const char *dir) {
 
 	DIR *dp;
 	struct dirent *entry; 
 	struct stat statbuf;
 
-	//Check whether directory can be opened or not
 	if((dp = opendir(dir)) == NULL) { 
 		printf("Error: Unable to open directory! %s\n", dir);
 		return; 
@@ -39,13 +38,12 @@ void traverse(const char *dir) {
 
 	chdir(dir);
 
-	//Recurse through each directory
 	while((entry = readdir(dp)) != NULL) {
 		lstat(entry->d_name, &statbuf); 
 		if(S_ISDIR(statbuf.st_mode)) {
 			if(strcmp(".",entry->d_name) == 0 || strcmp("..",entry->d_name) == 0)
 				continue;
-			traverse(entry->d_name);
+			deleteDirectory(entry->d_name);
 		}
 		else {
 			remove(entry->d_name);
@@ -60,8 +58,8 @@ void traverse(const char *dir) {
 }
 
 int main() {
-	//deleteFile("hello.txt");
+	deleteFile("/Users/aishwary/Desktop/hello.txt");
 
-	traverse("dsa");
+	//traverse("dsa");
 	return 0;
 }
