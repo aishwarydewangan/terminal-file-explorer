@@ -60,6 +60,7 @@ void deleteDirectory(const char *dir) {
 int main() {
 	deleteFile("/Users/aishwary/Desktop/hello.txt");
 
-	//traverse("dsa");
+	deleteDirectory("");
+	
 	return 0;
 }
