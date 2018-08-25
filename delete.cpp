@@ -1,18 +1,4 @@
-#include <unistd.h>
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-#include <dirent.h> 
-#include <sys/stat.h> 
-
-using namespace std;
-
-bool isFileExists(const char *name) {
-	ifstream file(name);
-	bool check = file.good();
-	file.close();
-	return check;
-}
+#include "include/delete.h"
 
 void deleteFile(const char *name) {
 	if(isFileExists(name)) {
@@ -55,12 +41,4 @@ void deleteDirectory(const char *dir) {
 	rmdir(dir);
 
 	closedir(dp); 
-}
-
-int main() {
-	deleteFile("/Users/aishwary/Desktop/hello.txt");
-
-	deleteDirectory("");
-	
-	return 0;
 }

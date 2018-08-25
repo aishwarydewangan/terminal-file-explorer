@@ -1,13 +1,4 @@
-#include <iostream>
-#include <string>
-#include <iomanip>
-#include <dirent.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <time.h>
-
-using namespace std;
+#include "include/list.h"
 
 string check(unsigned const char type) {
     if(type == DT_REG)
@@ -45,13 +36,4 @@ int show(const char *path) {
     closedir(dp);
 
     return 0;
-}
-
-int main() {
-
-	show("/Users/aishwary/Desktop/");
-
-	cout << endl;
-
-	return 0;
 }

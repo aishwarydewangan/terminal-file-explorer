@@ -1,9 +1,4 @@
-#include <unistd.h> 
-#include <stdio.h> 
-#include <dirent.h> 
-#include <string.h> 
-#include <sys/stat.h> 
-#include <stdlib.h>
+#include "include/snapshot.h"
 
 void snapshot(const char *dir, int depth) {
 
@@ -11,7 +6,6 @@ void snapshot(const char *dir, int depth) {
 	struct dirent *entry; 
 	struct stat statbuf;
 
-	//Check whether directory can be opened or not
 	if((dp = opendir(dir)) == NULL) { 
 		printf("Error: Unable to open directory! %s\n", dir);
 		return; 
@@ -19,7 +13,6 @@ void snapshot(const char *dir, int depth) {
 
 	chdir(dir);
 
-	//Recurse through each directory
 	while((entry = readdir(dp)) != NULL) {
 		lstat(entry->d_name,&statbuf); 
 		if(S_ISDIR(statbuf.st_mode)) {
@@ -36,9 +29,4 @@ void snapshot(const char *dir, int depth) {
 
 	closedir(dp); 
 
-}
-
-int main() {
-	snapshot("/Users/aishwary/Desktop", 0);
-	return 0;
 }

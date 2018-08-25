@@ -29,7 +29,6 @@ int main() {
 	}
 
 	cout << "\e[2J";
-	cout << "\e[32;44m";
 
 	printLoremIpsum();
 

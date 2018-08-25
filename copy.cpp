@@ -1,32 +1,6 @@
-#include <iostream>
-#include <fstream>
-#include <cstdio>
-#include <fcntl.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <string>
-#include <vector>
-#include <limits.h>
-#include <stdlib.h>
+#include "include/copy.h"
 
-using namespace std;
-
-vector<string> filePaths, directoryPaths;
-
-bool isFileExists(const char *name) {
-	ifstream file(name);
-	bool check = file.good();
-	file.close();
-	return check;
-}
-
-bool isDirectoryExists(const char *name) {
-	struct stat st;
-	if(stat(name, &st) == -1) 
-		return false;
-	return true;
-}
+static vector<string> filePaths, directoryPaths;
 
 void copyFile(const char *sourceFile, const char *destinationFile) {
 	if(isFileExists(sourceFile)) {
@@ -106,14 +80,4 @@ void copyDirectory(string sourceDirectory, string destinationDirectory) {
 		string temp = destinationAbsolutePath + filePaths[i].substr(pos);
 		copyFile(filePaths[i].c_str(), temp.c_str());
 	}
-}
-
-int main() {
-	//copyFile("hello.txt", "hey.txt");
-
-	copyDirectory("dsa", "/Users/aishwary/Desktop/testing");
-
-	cout << endl;
-
-	return 0;
 }

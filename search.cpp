@@ -1,13 +1,4 @@
-#include <unistd.h> 
-#include <stdio.h> 
-#include <dirent.h> 
-#include <string.h> 
-#include <sys/stat.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <iostream>
-
-using namespace std;
+#include "include/search.h"
 
 int flag;
 
@@ -17,7 +8,6 @@ void traverse(const char *dir, const char *name) {
 	struct dirent *entry; 
 	struct stat statbuf;
 
-	//Check whether directory can be opened or not
 	if((dp = opendir(dir)) == NULL) { 
 		printf("Error: Unable to open directory! %s\n", dir);
 		return; 
@@ -25,7 +15,6 @@ void traverse(const char *dir, const char *name) {
 
 	chdir(dir);
 
-	//Recurse through each directory
 	while((entry = readdir(dp)) != NULL) {
 		lstat(entry->d_name, &statbuf); 
 		if(S_ISDIR(statbuf.st_mode)) {
@@ -60,11 +49,4 @@ void search(const char *dir, const char *name) {
 
 	if(flag == 0)
 		cout << "\nError: File/Directory not found";
-}
-
-int main() {
-
-	search("/Users/aishwary/Desktop", "dsa");
-
-	return 0;
 }

@@ -1,14 +1,4 @@
-#include <cstdio>
-#include <iostream>
-
-using namespace std;
-
-bool isFileExists(const char *name) {
-	ifstream file(name);
-	bool check = file.good();
-	file.close();
-	return check;
-}
+#include "include/rename.h"
 
 void renameFile(const char *oldFileName, const char *newFileName) {
 	if(isFileExists(oldFileName)) {
@@ -24,9 +14,4 @@ void renameFile(const char *oldFileName, const char *newFileName) {
 	} else {
 		cout << "\nError: Source File not found. Please check name!";
 	}
-}
-
-int main() {
-	renameFile("hello.txt", "hey.mp4");
-	return 0;
 }

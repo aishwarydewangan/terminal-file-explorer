@@ -1,16 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <dirent.h> 
-#include <sys/stat.h> 
-
-using namespace std;
-
-bool isFileExists(const char *name) {
-	ifstream file(name);
-	bool check = file.good();
-	file.close();
-	return check;
-}
+#include "include/create.h"
 
 void createFile(const char *name) {
 	if(!isFileExists(name)) {
@@ -29,10 +17,4 @@ void createDirectory(const char *name) {
 		cout << "\nError: Directory already exists. Please check name!";
 	}
 
-}
-
-int main() {
-	createFile("hello.txt");
-	createDirectory("Hello");
-	return 0;
 }
