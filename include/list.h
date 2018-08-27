@@ -5,6 +5,10 @@
 
 string check(unsigned const char type);
 
-int show(const char *path);
+vector<string> getListBuffer(const char *path);
+
+vector<string> getDirectoryBuffer(const char *path);
+
+string getPermissions(struct stat sb);
 
 #endif

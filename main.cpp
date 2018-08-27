@@ -31,7 +31,7 @@ int main() {
 
 	search("/Users/aishwary/Desktop", "dsa");
 
-	snapshot("/Users/aishwary/Desktop", 0);
+	//snapshot("/Users/aishwary/Desktop", 0);
 
 	return 0;
 }
