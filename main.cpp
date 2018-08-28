@@ -121,36 +121,33 @@ void start(char *path) {
 				printf("\e[1B");
 			}
 
-			if(c == 10) {
+			if(c == '\n') {
 
-				printf("\e[24;10HGetting Path");
-				
-				string firstPath(path), secondPath(directoryContents[low+cursorPos-1]->d_name);
+				printf("\e[2J");
+
+				string firstPath(path);
+
+				string secondPath(directoryContents[low+cursorPos-1]->d_name);
 
 				firstPath = firstPath + "/";
 
 				string fullPath = firstPath + secondPath;
 
-				strcpy(path, fullPath.c_str());
-
-				printf("\e[25;10H%s", path);
-
-				printf("\e[%d;1H", cursorPos);
-
-
-				/*
 
 				low = 0;
 				high = 19;
 				cursorPos = 1;
+
 				listBuffer.clear();
 				free(directoryContents);
-				makeDirectoryBuffer((const char*)path);
+
+				makeDirectoryBuffer(fullPath.c_str());
+
 				MAX_POS = listBuffer.size()-1;
+
 				printBuffer(low, high);
 				printf("\e[1;1H");
-
-				*/
+				
 			}
 
 			if(c == 'q') {
