@@ -11,6 +11,6 @@ void printBuffer(int low, int high);
 
 void makeDirectoryBuffer(const char *path);
 
-void start(const char * path);
+void start(char * path);
 
 #endif

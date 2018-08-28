@@ -68,17 +68,15 @@ void makeDirectoryBuffer(const char *path) {
 		str = str + ctime(&sb.st_mtime);
 		listBuffer.push_back(str);
    	}
-
-   	free(directoryContents);
 }
 
-void start(const char * path) {
+void start(char *path) {
 
 	if(enableNonCanonicalMode()) {
 
 		printf("\e[2J");
 
-		makeDirectoryBuffer(path);
+		makeDirectoryBuffer((const char *)path);
 
 		printBuffer(0, 19);
 
@@ -121,6 +119,38 @@ void start(const char * path) {
 					cursorPos++;	
 				}
 				printf("\e[1B");
+			}
+
+			if(c == 10) {
+
+				printf("\e[24;10HGetting Path");
+				
+				string firstPath(path), secondPath(directoryContents[low+cursorPos-1]->d_name);
+
+				firstPath = firstPath + "/";
+
+				string fullPath = firstPath + secondPath;
+
+				strcpy(path, fullPath.c_str());
+
+				printf("\e[25;10H%s", path);
+
+				printf("\e[%d;1H", cursorPos);
+
+
+				/*
+
+				low = 0;
+				high = 19;
+				cursorPos = 1;
+				listBuffer.clear();
+				free(directoryContents);
+				makeDirectoryBuffer((const char*)path);
+				MAX_POS = listBuffer.size()-1;
+				printBuffer(low, high);
+				printf("\e[1;1H");
+
+				*/
 			}
 
 			if(c == 'q') {
