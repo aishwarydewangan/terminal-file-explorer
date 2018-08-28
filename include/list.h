@@ -3,12 +3,14 @@
 
 #include "utils.h"
 
-string check(unsigned const char type);
+bool enableNonCanonicalMode();
 
-vector<string> getListBuffer(const char *path);
+void disableNonCanonicalMode();
 
-vector<string> getDirectoryBuffer(const char *path);
+void printBuffer(int low, int high);
 
-string getPermissions(struct stat sb);
+void makeDirectoryBuffer(const char *path);
+
+void start(const char * path);
 
 #endif
