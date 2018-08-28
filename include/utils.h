@@ -5,9 +5,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stack>
 #include <iomanip>
 #include <fstream>
 #include <cstdio>
+#include <cstring>
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>

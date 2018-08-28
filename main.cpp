@@ -4,7 +4,15 @@ struct termios oldTerm, newTerm;
 
 struct dirent **directoryContents;
 
+static int directoryNum;
+
 vector<string> listBuffer;
+
+stack<string> stkPath;
+
+void refreshScreen() {
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+}
 
 bool enableNonCanonicalMode() {
 	tcgetattr(STDIN_FILENO, &oldTerm);
@@ -21,7 +29,7 @@ bool enableNonCanonicalMode() {
 }
 
 void disableNonCanonicalMode() {
-	printf("\e[2J");
+	refreshScreen();
 
 	printf("\e[1;1H");
 
@@ -29,7 +37,7 @@ void disableNonCanonicalMode() {
 }
 
 void printBuffer(int low, int high) {
-	printf("\e[2J");
+	refreshScreen();
 
 	printf("\e[1;1H");
 
@@ -50,12 +58,16 @@ void printBuffer(int low, int high) {
 
 void makeDirectoryBuffer(const char *path) {
 
-	int n = scandir(path, &directoryContents, NULL, alphasort);
+	chdir(path);
+
+	int n = scandir(".", &directoryContents, NULL, alphasort);
 
 	if (n == -1) {
        perror("scandir");
        exit(EXIT_FAILURE);
    	}
+
+   	directoryNum = n;
 
    	for(int i = 0; i < n; i++) {
    		string str;
@@ -70,17 +82,29 @@ void makeDirectoryBuffer(const char *path) {
    	}
 }
 
-void start(char *path) {
+void start(string path) {
 
 	if(enableNonCanonicalMode()) {
 
-		printf("\e[2J");
+		refreshScreen();
 
-		makeDirectoryBuffer((const char *)path);
+		makeDirectoryBuffer(path.c_str());
 
-		printBuffer(0, 19);
+		stkPath.push(path);
 
-		int low = 0, high = 19, cursorPos = 1, MAX_POS = listBuffer.size()-1;
+		int low, high, cursorPos, MAX_POS, MAX_CPOS;
+
+		low = 0;
+
+		high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
+
+		cursorPos = 1;
+
+		MAX_POS = listBuffer.size()-1;
+
+		MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+		printBuffer(low, high);
 
 		printf("\e[1;1H");
 
@@ -107,7 +131,7 @@ void start(char *path) {
 			}
 
 			if(c == 66) {
-				if(cursorPos == 20) {
+				if(cursorPos == MAX_CPOS) {
 					if(high < MAX_POS) {
 						low++;
 						high++;
@@ -115,39 +139,41 @@ void start(char *path) {
 					printBuffer(low, high);
 				}
 
-				if(cursorPos < 20) {
+				if(cursorPos < MAX_CPOS) {
 					cursorPos++;	
 				}
 				printf("\e[1B");
 			}
 
-			if(c == '\n') {
+			if(c == 10) {
 
-				printf("\e[2J");
+				string fullPath;
 
-				string firstPath(path);
+				if(directoryContents[low+cursorPos-1]->d_name != ".") {
 
-				string secondPath(directoryContents[low+cursorPos-1]->d_name);
+					if(directoryContents[low+cursorPos-1]->d_name == "..")
+						fullPath = stkPath.top();
+					else
+						fullPath = realpath(directoryContents[low+cursorPos-1]->d_name, NULL);
 
-				firstPath = firstPath + "/";
+					listBuffer.clear();
 
-				string fullPath = firstPath + secondPath;
+					free(directoryContents);
 
+					makeDirectoryBuffer(fullPath.c_str());
 
-				low = 0;
-				high = 19;
-				cursorPos = 1;
+					low = 0;
 
-				listBuffer.clear();
-				free(directoryContents);
+					high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
 
-				makeDirectoryBuffer(fullPath.c_str());
+					cursorPos = 1;
 
-				MAX_POS = listBuffer.size()-1;
+					MAX_POS = listBuffer.size()-1;
 
-				printBuffer(low, high);
-				printf("\e[1;1H");
-				
+					MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+					printBuffer(low, high);	
+				}
 			}
 
 			if(c == 'q') {
@@ -165,34 +191,3 @@ int main() {
 	start("/Users/aishwary/Desktop/testing");
 	return 0;
 }
-/*
-
-int test() {
-
-	//show("/Users/aishwary/Desktop/");
-
-	createFile("hello.txt");
-	
-	//createDirectory("Hello");
-
-	//copyFile("hello.txt", "hey.txt");
-
-	//copyDirectory("dsa", "/Users/aishwary/Desktop/testing");
-
-	//deleteFile("/Users/aishwary/Desktop/hello.txt");
-
-	//deleteDirectory("");
-
-	//moveFile("hello.txt", "hey.txt");
-
-	//moveDirectory("dsa", "/Users/aishwary/Desktop/testing");
-
-	renameFile("hello.txt", "hey.mp4");
-
-	search("/Users/aishwary/Desktop", "dsa");
-
-	//snapshot("/Users/aishwary/Desktop", 0);
-
-	return 0;
-}
-*/
