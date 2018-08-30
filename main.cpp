@@ -8,7 +8,9 @@ static int directoryNum;
 
 vector<string> listBuffer;
 
-stack<string> stkPath;
+stack<string> forwardPath, backwardPath;
+
+string root = "/Users/aishwary/Desktop/testing";
 
 void refreshScreen() {
   write(STDOUT_FILENO, "\x1b[2J", 4);
@@ -90,7 +92,7 @@ void start(string path) {
 
 		makeDirectoryBuffer(path.c_str());
 
-		stkPath.push(path);
+		forwardPath.push(path);
 
 		int low, high, cursorPos, MAX_POS, MAX_CPOS;
 
@@ -112,7 +114,7 @@ void start(string path) {
 
 		while(1) {
 
-			c = getchar();
+			c = getchar();			
 
 			if(c == 65) {
 				if(cursorPos == 1) {
@@ -145,16 +147,13 @@ void start(string path) {
 				printf("\e[1B");
 			}
 
-			if(c == 10) {
 
-				string fullPath;
-
-				if(directoryContents[low+cursorPos-1]->d_name != ".") {
-
-					if(directoryContents[low+cursorPos-1]->d_name == "..")
-						fullPath = stkPath.top();
-					else
-						fullPath = realpath(directoryContents[low+cursorPos-1]->d_name, NULL);
+			//Left
+			if(c == 68) { 
+				if(forwardPath.size() > 1) {
+					backwardPath.push(forwardPath.top());
+					forwardPath.pop();
+					string fullPath = forwardPath.top();
 
 					listBuffer.clear();
 
@@ -176,6 +175,80 @@ void start(string path) {
 				}
 			}
 
+			//Right
+			if(c == 67) {
+				if(backwardPath.size() > 0) {
+					string fullPath;
+					fullPath = backwardPath.top();
+					backwardPath.pop();
+					forwardPath.push(fullPath);
+
+					listBuffer.clear();
+
+					free(directoryContents);
+
+					makeDirectoryBuffer(fullPath.c_str());
+
+					low = 0;
+
+					high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
+
+					cursorPos = 1;
+
+					MAX_POS = listBuffer.size()-1;
+
+					MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+					printBuffer(low, high);	
+				}
+			}
+
+			if(c == 10) {
+
+				string fullPath;
+
+				if(check(directoryContents[low+cursorPos-1]->d_type) == "Directory") {
+
+					if(low+cursorPos-1 != 0) {
+
+						if(directoryContents[low+cursorPos-1]->d_name == "..") {
+							if(forwardPath.size() > 1) {
+								fullPath = forwardPath.top();
+								forwardPath.pop();
+								backwardPath.push(fullPath);
+							} else {
+								continue;
+							}
+						} else {
+							fullPath = realpath(directoryContents[low+cursorPos-1]->d_name, NULL);
+							forwardPath.push(fullPath);
+						}
+
+						listBuffer.clear();
+
+						free(directoryContents);
+
+						makeDirectoryBuffer(fullPath.c_str());
+
+						low = 0;
+
+						high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
+
+						cursorPos = 1;
+
+						MAX_POS = listBuffer.size()-1;
+
+						MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+						printBuffer(low, high);	
+					}
+				}
+
+				if(check(directoryContents[low+cursorPos-1]->d_type) == "File") {
+					printf("\e[25;1HYet to implement");
+				}
+			}
+
 			if(c == 'q') {
 				break;
 			}
@@ -188,6 +261,6 @@ void start(string path) {
 }
 
 int main() {
-	start("/Users/aishwary/Desktop/testing");
+	start(root);
 	return 0;
 }
