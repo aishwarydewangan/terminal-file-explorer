@@ -49,6 +49,27 @@ void printBuffer(int low, int high) {
 	refreshScreen();
 
 	printf("\e[1;1H");
+	
+	/*
+	vector<string> info(6);
+
+	info[0] = "Name";
+	info[1] = "Permissions";
+	info[2] = "Size";
+	info[3] = "User";
+	info[4] = "Group";
+	info[5] = "Last Modified";
+
+	for(int i = 0; i < info.size(); i++)
+		printf("%-14s", info[i].c_str());
+
+	printf("\e[2;1H");
+
+	for(int i = 0; i < info.size()*15; i++)
+		printf("_");
+
+	printf("\e[3;1H");
+	*/
 
 	for(int i = low; i <= high; i++) {
 		char *listLine = new char[listBuffer[i].length()+1];
@@ -91,6 +112,8 @@ void makeDirectoryBuffer(const char *path) {
 			str = temp.substr(0, 10);
 		temp = getPermissions(sb);
 		str = str + "/" + temp.substr(0, 10) + "/";
+		temp = getSize(sb.st_size);
+		str = str + temp.substr(0, 12) + "/";
 		temp = getpwuid(sb.st_uid)->pw_name;
 		str = str + temp.substr(0, 12) + "/";
 		temp = getgrgid(sb.st_gid)->gr_name;

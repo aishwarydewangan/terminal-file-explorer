@@ -96,4 +96,32 @@ inline string getPermissions(struct stat sb) {
 	return permissions;
 }
 
+inline string getSize(long long bytes) {
+
+	long long B = 1024;
+	long long KB = B*B;
+	long long MB = B*KB;
+	long long GB = B*MB;
+
+	float round;
+
+	char buf[80];
+
+	if(bytes <= B)
+		sprintf(buf, "%.2fB", (float)bytes);
+
+	if(bytes > B && bytes <= KB)
+		sprintf(buf, "%.2fKB", (float)bytes/B);
+
+	if(bytes > KB && bytes <= MB)
+		sprintf(buf, "%.2fMB", (float)bytes/KB);
+
+	if(bytes > MB)
+		sprintf(buf, "%.2fGB", (float)bytes/MB);
+
+	string size(buf);
+
+	return size;
+}
+
 #endif
