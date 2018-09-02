@@ -115,13 +115,17 @@ void executeCommand(string ip) {
 
 		validCommand = true;
 
-		for(int i = 1; i < cmdTokens.size(); i++) {
-			if(isFile(cmdTokens[i].c_str())) {
-				deleteFile(cmdTokens[i].c_str());
-			}
-			if(isDirectory(cmdTokens[i].c_str())) {
-				deleteDirectory(cmdTokens[i].c_str());
-			}
+		if(cmdTokens.size() >= 3) {
+			for(int i = 1; i < cmdTokens.size(); i++) {
+				if(isFile(cmdTokens[i].c_str())) {
+					deleteFile(cmdTokens[i].c_str());
+				}
+				if(isDirectory(cmdTokens[i].c_str())) {
+					deleteDirectory(cmdTokens[i].c_str());
+				}
+			}		
+		} else {
+			printStatus("Error: Insufficient arguments.");
 		}
 		return;
 	}
@@ -151,6 +155,31 @@ void executeCommand(string ip) {
 				return;
 			} else{
 				printStatus("Error: First argument is not a directory.");
+				return;
+			}
+		} else {
+			printStatus("Error: Unnecessary arguments given.");
+		}
+		return;
+	}
+
+	if(strcmp(cmdTokens[0].c_str(), "rename") == 0) {
+
+		validCommand = true;
+
+		if(cmdTokens.size() == 3) {
+			string oldFile = cmdTokens[1];
+			string newFile = cmdTokens[2];
+
+			if(isFile(oldFile.c_str())) {
+				
+				rename(oldFile.c_str(), newFile.c_str());
+
+				printStatus("Success: File renamed successfully.");
+
+				return;
+			} else{
+				printStatus("Error: First argument is not a file.");
 				return;
 			}
 		} else {
@@ -213,9 +242,6 @@ void executeCommand(string ip) {
 			for(int i = 1; i < cmdTokens.size()-1; i++) {
 				string basePath = cmdTokens[cmdTokens.size()-1];
 
-				//if(strcmp(basePath.c_str(), ".") == 0)
-				//Complete this
-
 				string dest = basePath + "/" + cmdTokens[i];
 
 				createFile(dest.c_str());
@@ -229,9 +255,6 @@ void executeCommand(string ip) {
 			for(int i = 1; i < cmdTokens.size()-1; i++) {
 				string basePath = cmdTokens[cmdTokens.size()-1];
 
-				//if(strcmp(basePath.c_str(), ".") == 0)
-				//Complete this
-
 				string dest = basePath + "/" + cmdTokens[i];
 
 				createDirectory(dest.c_str());
@@ -239,7 +262,6 @@ void executeCommand(string ip) {
 		}
 	} else {
 		printStatus("Error: Destination is not a directory.");
-		return;
 	}
 	if(!validCommand) {
 		printStatus("Error: Command not found. Please check name.");
@@ -415,6 +437,59 @@ void start(string path) {
 
 					printBuffer(low, high);	
 				}
+			}
+
+			if(c == 127) { 
+				if(forwardPath.size() > 1) {
+					backwardPath.push(forwardPath.top());
+					forwardPath.pop();
+					string fullPath = forwardPath.top();
+
+					listBuffer.clear();
+
+					free(directoryContents);
+
+					makeDirectoryBuffer(fullPath.c_str());
+
+					low = 0;
+
+					high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
+
+					cursorPos = 1;
+
+					MAX_POS = listBuffer.size()-1;
+
+					MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+					printBuffer(low, high);	
+				}
+			}
+
+			if(c == 'h') { 
+
+				if(strcmp(forwardPath.top().c_str(), root) != 0) {
+					forwardPath.push(root);
+
+					string fullPath = forwardPath.top();
+
+					listBuffer.clear();
+
+					free(directoryContents);
+
+					makeDirectoryBuffer(fullPath.c_str());
+
+					low = 0;
+
+					high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
+
+					cursorPos = 1;
+
+					MAX_POS = listBuffer.size()-1;
+
+					MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+					printBuffer(low, high);
+				}	
 			}
 
 			if(c == 10) {
