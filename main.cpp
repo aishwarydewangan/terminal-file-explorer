@@ -89,9 +89,15 @@ void makeDirectoryBuffer(const char *path) {
 }
 
 void executeCommand(string ip) {
+
+	bool validCommand = false;
+
 	vector<string> cmdTokens = tokenizeString(ip, " ");
 
 	if(strcmp(cmdTokens[0].c_str(), "delete") == 0) {
+
+		validCommand = true;
+
 		for(int i = 1; i < cmdTokens.size(); i++) {
 			if(isFile(cmdTokens[i].c_str())) {
 				deleteFile(cmdTokens[i].c_str());
@@ -109,6 +115,9 @@ void executeCommand(string ip) {
 			cmdTokens[cmdTokens.size()-1].pop_back();
 
 		if(strcmp(cmdTokens[0].c_str(), "copy") == 0) {
+
+			validCommand = true;
+
 			for(int i = 1; i < cmdTokens.size()-1; i++) {
 				if(isFile(cmdTokens[i].c_str())) {
 					vector<string> name = tokenizeString(cmdTokens[i], "/");
@@ -127,6 +136,9 @@ void executeCommand(string ip) {
 		}
 
 		if(strcmp(cmdTokens[0].c_str(), "move") == 0) {
+
+			validCommand = true;
+
 			for(int i = 1; i < cmdTokens.size()-1; i++) {
 				if(isFile(cmdTokens[i].c_str())) {
 					vector<string> name = tokenizeString(cmdTokens[i], "/");
@@ -145,6 +157,9 @@ void executeCommand(string ip) {
 		}
 
 		if(strcmp(cmdTokens[0].c_str(), "create_file") == 0) {
+
+			validCommand = true;
+
 			for(int i = 1; i < cmdTokens.size()-1; i++) {
 				string basePath = cmdTokens[cmdTokens.size()-1];
 
@@ -158,6 +173,9 @@ void executeCommand(string ip) {
 		}
 
 		if(strcmp(cmdTokens[0].c_str(), "create_dir") == 0) {
+
+			validCommand = true;
+
 			for(int i = 1; i < cmdTokens.size()-1; i++) {
 				string basePath = cmdTokens[cmdTokens.size()-1];
 
@@ -173,6 +191,12 @@ void executeCommand(string ip) {
 		printf("\e[26;1H");
 		printf("\e[K");
 		printf("\e[26;1HError: Destination is not a directory.");
+		return;
+	}
+	if(!validCommand) {
+		printf("\e[26;1H");
+		printf("\e[K");
+		printf("\e[26;1HError: Command not found. Please check name.");
 	}
 }
 
@@ -387,7 +411,12 @@ void start(string path) {
 				}
 
 				if(check(directoryContents[low+cursorPos-1]->d_type) ==  "File") {
-					printf("\e[25;1HYet to implement");
+					pid_t pid;
+					pid = fork();
+					if(pid == 0) {
+						execl("/usr/bin/open", "open", directoryContents[low+cursorPos-1]->d_name, (char *)0);
+						exit(0);
+					}
 				}
 			}
 
