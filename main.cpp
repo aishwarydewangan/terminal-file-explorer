@@ -2,9 +2,10 @@
 #include "include/create.h"
 #include "include/copy.h"
 #include "include/move.h"
+#include "include/rename.h"
+#include "include/search.h"
 #include "include/delete.h"
 #include "include/snapshot.h"
-#include "include/rename.h"
 
 struct termios oldTerm, newTerm;
 
@@ -106,27 +107,22 @@ void executeCommand(string ip) {
 
 	vector<string> cmdTokens = tokenizeString(ip, " ");
 
-	if(cmdTokens.size() < 3) {
-		printStatus("Error: Insufficient input.");
-		return;
-	}
-
-	if(strcmp(cmdTokens[0].c_str(), "delete") == 0) {
+	if(strcmp(cmdTokens[0].c_str(), "search") == 0) {
 
 		validCommand = true;
 
-		if(cmdTokens.size() >= 3) {
-			for(int i = 1; i < cmdTokens.size(); i++) {
-				if(isFile(cmdTokens[i].c_str())) {
-					deleteFile(cmdTokens[i].c_str());
-				}
-				if(isDirectory(cmdTokens[i].c_str())) {
-					deleteDirectory(cmdTokens[i].c_str());
-				}
-			}		
+		if(cmdTokens.size() == 2) {
+			string name = cmdTokens[1];
+
+			search(forwardPath.top().c_str(), name.c_str());
 		} else {
-			printStatus("Error: Insufficient arguments.");
+			printStatus("Error: Unnecessary arguments given.");
 		}
+		return;
+	}
+
+	if(cmdTokens.size() < 3) {
+		printStatus("Error: Insufficient input.");
 		return;
 	}
 
@@ -159,6 +155,25 @@ void executeCommand(string ip) {
 			}
 		} else {
 			printStatus("Error: Unnecessary arguments given.");
+		}
+		return;
+	}
+
+	if(strcmp(cmdTokens[0].c_str(), "delete") == 0) {
+
+		validCommand = true;
+
+		if(cmdTokens.size() >= 3) {
+			for(int i = 1; i < cmdTokens.size(); i++) {
+				if(isFile(cmdTokens[i].c_str())) {
+					deleteFile(cmdTokens[i].c_str());
+				}
+				if(isDirectory(cmdTokens[i].c_str())) {
+					deleteDirectory(cmdTokens[i].c_str());
+				}
+			}		
+		} else {
+			printStatus("Error: Insufficient arguments.");
 		}
 		return;
 	}
@@ -467,7 +482,7 @@ void start(string path) {
 
 			if(c == 'h') { 
 
-				if(strcmp(forwardPath.top().c_str(), root) != 0) {
+				if(strcmp(forwardPath.top().c_str(), root.c_str()) != 0) {
 					forwardPath.push(root);
 
 					string fullPath = forwardPath.top();
