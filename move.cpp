@@ -4,9 +4,6 @@ static vector<string> filePaths, directoryPaths;
 
 void moveFile(const char *sourceFile, const char *destinationFile) {
 
-	printf("\e[26;1H");
-	printf("\e[K");
-
 	if(isFileExists(sourceFile)) {
 		if(!isFileExists(destinationFile)) {	
 			char buf[BUFSIZ];
@@ -24,22 +21,16 @@ void moveFile(const char *sourceFile, const char *destinationFile) {
 
 			deleteFile(sourceFile);
 
-			printf("\e[26;1H");
-			printf("\e[K");
-
-			printf("\e[26;1HSuccess: File moved.");
+			printStatus("Success: File moved.");
 		} else {
-			printf("\e[26;1HError: Destination File already exists. Please check name.");
+			printStatus("Error: Destination File already exists. Please check name.");
 		}
 	} else {
-		printf("\e[26;1HError: Source File not found. Please check name.");
+		printStatus("Error: Source File not found. Please check name.");
 	}
 }
 
 void moveDirectory(string sourceDirectory, string destinationDirectory) {
-
-	printf("\e[26;1H");
-	printf("\e[K");
 
 	if(isDirectoryExists(sourceDirectory.c_str())) {
 		if(isDirectoryExists(destinationDirectory.c_str())) {
@@ -70,17 +61,14 @@ void moveDirectory(string sourceDirectory, string destinationDirectory) {
 
 				deleteDirectory(sourceAbsolutePath.c_str());
 
-				printf("\e[26;1H");
-				printf("\e[K");
-
-				printf("\e[26;1HSuccess: File moved.");
+				printStatus("Success: File moved.");
 			} else {
-				printf("\e[26;1HError: Destination Directory exists. Please check name.");
+				printStatus("Error: Destination Directory exists. Please check name.");
 			}
 		} else {
-			printf("\e[26;1HError: Destination Directory does not exists. Please check name.");
+			printStatus("Error: Destination Directory does not exists. Please check name.");
 		}
 	} else {
-		printf("\e[26;1HError: Source Directory does not exists. Please check name.");
+		printStatus("Error: Source Directory does not exists. Please check name.");
 	}
 }

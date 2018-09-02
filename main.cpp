@@ -3,6 +3,8 @@
 #include "include/copy.h"
 #include "include/move.h"
 #include "include/delete.h"
+#include "include/snapshot.h"
+#include "include/rename.h"
 
 struct termios oldTerm, newTerm;
 
@@ -53,9 +55,11 @@ void printBuffer(int low, int high) {
 		char *token = strtok(listLine, "/");
 		while (token != NULL)
 	    {
-	    	printf("%-12s", token);
+	    	string temp = token;
+	    	printf("%-14s", temp.c_str());
 	        token = strtok(NULL, "/");
 	    }
+	    printf("\n");
 	    delete [] listLine;
 	}
 
@@ -76,14 +80,22 @@ void makeDirectoryBuffer(const char *path) {
    	directoryNum = n;
 
    	for(int i = 0; i < n; i++) {
-   		string str;
+   		string str, temp;
 		struct stat sb;
 		stat(directoryContents[i]->d_name, &sb);
-		str = directoryContents[i]->d_name;
-		str = str + "/" + getPermissions(sb) + "/";
-		str = str + getpwuid(sb.st_uid)->pw_name + "/";
-		str = str + getgrgid(sb.st_gid)->gr_name + "/";
-		str = str + ctime(&sb.st_mtime);
+		temp = directoryContents[i]->d_name;
+		if(temp.size()>10)
+			str = temp.substr(0, 10) + ".." ;
+		else
+			str = temp.substr(0, 10);
+		temp = getPermissions(sb);
+		str = str + "/" + temp.substr(0, 10) + "/";
+		temp = getpwuid(sb.st_uid)->pw_name;
+		str = str + temp.substr(0, 12) + "/";
+		temp = getgrgid(sb.st_gid)->gr_name;
+		str = str + temp.substr(0, 12) + "/";
+		temp = ctime(&sb.st_mtime);
+		str = str + temp.substr(0, 16);
 		listBuffer.push_back(str);
    	}
 }
@@ -93,6 +105,11 @@ void executeCommand(string ip) {
 	bool validCommand = false;
 
 	vector<string> cmdTokens = tokenizeString(ip, " ");
+
+	if(cmdTokens.size() < 3) {
+		printStatus("Error: Insufficient input.");
+		return;
+	}
 
 	if(strcmp(cmdTokens[0].c_str(), "delete") == 0) {
 
@@ -105,6 +122,39 @@ void executeCommand(string ip) {
 			if(isDirectory(cmdTokens[i].c_str())) {
 				deleteDirectory(cmdTokens[i].c_str());
 			}
+		}
+		return;
+	}
+
+	if(strcmp(cmdTokens[0].c_str(), "snapshot") == 0) {
+
+		validCommand = true;
+
+		if(cmdTokens.size() == 3) {
+			string folder = cmdTokens[1];
+			string dumpFile = cmdTokens[2];
+
+			if(isDirectory(folder.c_str())) {
+				vector<string> sBuffer = getSnapshot(folder.c_str());
+
+				ofstream output;
+
+				output.open(dumpFile.c_str());
+
+				for(int i = 0; i < sBuffer.size(); i++) {
+					output <<  sBuffer[i];
+				}
+
+				output.close();
+
+				printStatus("Success: Snapshot dumped to the file.");
+				return;
+			} else{
+				printStatus("Error: First argument is not a directory.");
+				return;
+			}
+		} else {
+			printStatus("Error: Unnecessary arguments given.");
 		}
 		return;
 	}
@@ -188,15 +238,11 @@ void executeCommand(string ip) {
 			}
 		}
 	} else {
-		printf("\e[26;1H");
-		printf("\e[K");
-		printf("\e[26;1HError: Destination is not a directory.");
+		printStatus("Error: Destination is not a directory.");
 		return;
 	}
 	if(!validCommand) {
-		printf("\e[26;1H");
-		printf("\e[K");
-		printf("\e[26;1HError: Command not found. Please check name.");
+		printStatus("Error: Command not found. Please check name.");
 	}
 }
 

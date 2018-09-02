@@ -9,7 +9,7 @@ void traverse(const char *dir, const char *name) {
 	struct stat statbuf;
 
 	if((dp = opendir(dir)) == NULL) { 
-		printf("Error: Unable to open directory! %s\n", dir);
+		printStatus("Error: Unable to open directory.");
 		return; 
 	}
 

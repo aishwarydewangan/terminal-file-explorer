@@ -58,6 +58,12 @@ inline bool isDirectory(const char* path) {
     return S_ISDIR(buf.st_mode);
 }
 
+inline void printStatus(const char *status) {
+	printf("\e[26;1H");
+	printf("\e[K");
+	printf("\e[26;1H%s", status);
+}
+
 inline vector<string> tokenizeString(string str, string delim) {
 	vector<string> v;
 	char *temp = new char[str.size()+1];

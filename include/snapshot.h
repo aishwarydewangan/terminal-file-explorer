@@ -3,6 +3,8 @@
 
 #include "utils.h"
 
-void snapshot(const char *dir, int depth);
+void snapshot(const char *dir);
+
+vector<string> getSnapshot(const char *dir);
 
 #endif

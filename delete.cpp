@@ -2,17 +2,14 @@
 
 void deleteFile(const char *name) {
 
-	printf("\e[26;1H");
-	printf("\e[K");
-
 	if(isFileExists(name)) {
 		if(remove(name) == 0){
-			printf("\e[26;1HSuccess: File Deleted.");
+			printStatus("Success: File Deleted.");
 		} else {
-			printf("\e[26;1HError: Cannot delete file. Please check file permissions.");
+			printStatus("Error: Cannot delete file. Please check file permissions.");
 		}
 	} else {
-		printf("\e[26;1HError: File not found. Please check file name.");
+		printStatus("Error: File not found. Please check file name.");
 	}
 }
 
@@ -27,7 +24,7 @@ void deleteDirectory(const char *dir) {
 		struct stat statbuf;
 
 		if((dp = opendir(dir)) == NULL) { 
-			printf("\e[26;1HError: Unable to open Directory.");
+			printStatus("Error: Unable to open Directory.");
 			return; 
 		}
 
@@ -51,8 +48,8 @@ void deleteDirectory(const char *dir) {
 
 		closedir(dp); 
 		
-		printf("\e[26;1HSuccess: Directory deleted.");
+		printStatus("Success: Directory deleted.");
 	} else {
-		printf("\e[26;1HError: Directory does not exists.");
+		printStatus("Error: Directory does not exists.");
 	}
 }

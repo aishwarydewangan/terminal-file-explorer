@@ -4,9 +4,6 @@ static vector<string> filePaths, directoryPaths;
 
 void copyFile(const char *sourceFile, const char *destinationFile) {
 
-	printf("\e[26;1H");
-	printf("\e[K");
-
 	if(isFileExists(sourceFile)) {
 		if(!isFileExists(destinationFile)) {	
 			char buf[BUFSIZ];
@@ -22,12 +19,12 @@ void copyFile(const char *sourceFile, const char *destinationFile) {
 		    close(source);
 		    close(dest);
 
-		    printf("\e[26;1HSuccess: File copied.");
+		    printStatus("Success: File copied.");
 		} else {
-			printf("\e[26;1HError: Destination File already exists. Please check name.");
+			printStatus("Error: Destination File already exists. Please check name.");
 		}
 	} else {
-		printf("\e[26;1HError: Source File not found. Please check name.");
+		printStatus("Error: Source File not found. Please check name.");
 	}
 }
 
@@ -37,7 +34,7 @@ void index(string sourceDirectory) {
 	struct stat statbuf;
 
 	if((dp = opendir(sourceDirectory.c_str())) == NULL) { 
-		printf("Error: Unable to open directory! %s\n", sourceDirectory.c_str());
+		printStatus("Error: Unable to open directory.");
 		return; 
 	}
 
@@ -62,9 +59,6 @@ void index(string sourceDirectory) {
 }
 
 void copyDirectory(string sourceDirectory, string destinationDirectory) {
-
-	printf("\e[26;1H");
-	printf("\e[K");
 
 	if(isDirectoryExists(sourceDirectory.c_str())) {
 		if(isDirectoryExists(destinationDirectory.c_str())) {
@@ -93,14 +87,14 @@ void copyDirectory(string sourceDirectory, string destinationDirectory) {
 					copyFile(filePaths[i].c_str(), temp.c_str());
 				}
 
-				printf("\e[26;1HSuccess: Directory copied.");
+				printStatus("Success: Directory copied.");
 			} else {
-				printf("\e[26;1HError: Destination Directory exists. Please check name.");
+				printStatus("Error: Destination Directory exists. Please check name.");
 			}
 		} else {
-			printf("\e[26;1HError: Destination Directory does not exists. Please check name.");
+			printStatus("Error: Destination Directory does not exists. Please check name.");
 		}
 	} else {
-		printf("\e[26;1HError: Copy from Directory does not exists.  Please check name.");
+		printStatus("Error: Copy from Directory does not exists.  Please check name.");
 	}
 }
