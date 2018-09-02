@@ -2,7 +2,7 @@
 
 static vector<string> filePaths, directoryPaths;
 
-void copyFile(const char *sourceFile, const char *destinationFile) {
+int copyFile(const char *sourceFile, const char *destinationFile) {
 	if(isFileExists(sourceFile)) {
 		if(!isFileExists(destinationFile)) {	
 			char buf[BUFSIZ];
@@ -18,11 +18,14 @@ void copyFile(const char *sourceFile, const char *destinationFile) {
 		    close(source);
 		    close(dest);
 		} else {
-			cout << "\nError: Destination File already exists. Please check name!";
+			//Error: Destination File already exists. Please check name!
+			return -1;
 		}
 	} else {
-		cout << "\nError: Source File not found. Please check name!";
+		//Error: Source File not found. Please check name!
+		return -2;
 	}
+	return 1;
 }
 
 void index(string sourceDirectory) {
@@ -40,7 +43,7 @@ void index(string sourceDirectory) {
 	while((entry = readdir(dp)) != NULL) {
 		lstat(entry->d_name, &statbuf); 
 		if(S_ISDIR(statbuf.st_mode)) {
-			if(strcmp(".",entry->d_name) == 0 || strcmp("..",entry->d_name) == 0)
+			if(strcmp(".", entry->d_name) == 0 || strcmp("..", entry->d_name) == 0)
 				continue;
 			directoryPaths.push_back(realpath(entry->d_name, NULL));
 			index(entry->d_name);
@@ -55,29 +58,45 @@ void index(string sourceDirectory) {
 	closedir(dp); 
 }
 
-void copyDirectory(string sourceDirectory, string destinationDirectory) {
+int copyDirectory(string sourceDirectory, string destinationDirectory) {
 
-	string sourceAbsolutePath(realpath(sourceDirectory.c_str(), NULL));
+	if(isDirectoryExists(sourceDirectory.c_str())) {
+		if(isDirectoryExists(destinationDirectory.c_str())) {
+			string sourceAbsolutePath(realpath(sourceDirectory.c_str(), NULL));
 
-	string destinationAbsolutePath(realpath(destinationDirectory.c_str(), NULL));
+			string destinationAbsolutePath(realpath(destinationDirectory.c_str(), NULL));
 
-	int pos = sourceAbsolutePath.find_last_of('/');
+			int pos = sourceAbsolutePath.find_last_of('/');
 
-	string sourceName = sourceAbsolutePath.substr(pos+1);
+			string sourceName = sourceAbsolutePath.substr(pos+1);
 
-	index(realpath(sourceDirectory.c_str(), NULL));
+			index(realpath(sourceDirectory.c_str(), NULL));
 
-	string home(destinationAbsolutePath + '/' + sourceName);
+			string home(destinationAbsolutePath + '/' + sourceName);
 
-	mkdir(home.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+			if(!isDirectoryExists(home.c_str())) {
+				mkdir(home.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 
-	for(int i = 0; i < directoryPaths.size(); i++) {
-		string temp = destinationAbsolutePath + directoryPaths[i].substr(pos);
-		mkdir(temp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+				for(int i = 0; i < directoryPaths.size(); i++) {
+					string temp = destinationAbsolutePath + directoryPaths[i].substr(pos);
+					mkdir(temp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+				}
+
+				for(int i = 0; i < filePaths.size(); i++) {
+					string temp = destinationAbsolutePath + filePaths[i].substr(pos);
+					copyFile(filePaths[i].c_str(), temp.c_str());
+				}
+			} else {
+				//Error: Destination Directory Exists. Please check name!
+				return -1;
+			}
+		} else {
+			//Error: Copy to Directory does not exists.
+			return -2;
+		}
+	} else {
+		//Error: Copy from Directory does not exists. 
+		return -3;
 	}
-
-	for(int i = 0; i < filePaths.size(); i++) {
-		string temp = destinationAbsolutePath + filePaths[i].substr(pos);
-		copyFile(filePaths[i].c_str(), temp.c_str());
-	}
+	return 1;
 }

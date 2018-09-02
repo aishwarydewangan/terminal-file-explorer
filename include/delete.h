@@ -3,8 +3,8 @@
 
 #include "utils.h"
 
-void deleteFile(const char *name);
+int deleteFile(const char *name);
 
-void deleteDirectory(const char *dir);
+int deleteDirectory(const char *dir);
 
 #endif

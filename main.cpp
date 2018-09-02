@@ -216,8 +216,6 @@ void start(string path) {
 								fullPath = forwardPath.top();
 								forwardPath.pop();
 								backwardPath.push(fullPath);
-							} else {
-								continue;
 							}
 						} else {
 							fullPath = realpath(directoryContents[low+cursorPos-1]->d_name, NULL);
@@ -240,11 +238,11 @@ void start(string path) {
 
 						MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
 
-						printBuffer(low, high);	
+						printBuffer(low, high);
 					}
 				}
 
-				if(check(directoryContents[low+cursorPos-1]->d_type) == "File") {
+				if(check(directoryContents[low+cursorPos-1]->d_type) ==  "File") {
 					printf("\e[25;1HYet to implement");
 				}
 			}
@@ -252,6 +250,8 @@ void start(string path) {
 			if(c == 'q') {
 				break;
 			}
+
+			//printf("\e[24;1HBackward Top: %d", backwardPath.size());
 
 			printf("\e[%d;1H", cursorPos);
 		}

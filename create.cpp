@@ -1,20 +1,23 @@
 #include "include/create.h"
 
-void createFile(const char *name) {
+int createFile(const char *name) {
 	if(!isFileExists(name)) {
-		ofstream outfile(name);
-		outfile.close();
+		ofstream outFile(name);
+		outFile.close();
 	} else {
-		cout << "\nError: File already exists. Please check name!";
+		//Error: File already exists. Please check name!
+		return -1;
 	}
+	return 1;
 }
 
-void createDirectory(const char *name) {
+int createDirectory(const char *name) {
 	struct stat st;
 	if(stat(name, &st) == -1) {
 		mkdir(name, S_IRWXU | S_IRWXG | S_IRWXO);
 	} else {
-		cout << "\nError: Directory already exists. Please check name!";
+		//Error: Directory already exists. Please check name!
+		return -1;
 	}
-
+	return 1;
 }

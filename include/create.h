@@ -3,8 +3,8 @@
 
 #include "utils.h"
 
-void createFile(const char *name);
+int createFile(const char *name);
 
-void createDirectory(const char *name);
+int createDirectory(const char *name);
 
 #endif

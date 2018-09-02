@@ -5,8 +5,8 @@
 #include "copy.h"
 #include "delete.h"
 
-void moveFile(const char *sourceFile, const char *destinationFile);
+int moveFile(const char *sourceFile, const char *destinationFile);
 
-void moveDirectory(string sourceDirectory, string destinationDirectory);
+int moveDirectory(string sourceDirectory, string destinationDirectory);
 
 #endif

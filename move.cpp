@@ -2,7 +2,7 @@
 
 static vector<string> filePaths, directoryPaths;
 
-void moveFile(const char *sourceFile, const char *destinationFile) {
+int moveFile(const char *sourceFile, const char *destinationFile) {
 	if(isFileExists(sourceFile)) {
 		if(!isFileExists(destinationFile)) {	
 			char buf[BUFSIZ];
@@ -21,37 +21,57 @@ void moveFile(const char *sourceFile, const char *destinationFile) {
 			deleteFile(sourceFile);
 
 		} else {
-			cout << "\nError: Destination File already exists. Please check name!";
+			//Error: Destination File already exists. Please check name!
+			return -1;
 		}
 	} else {
-		cout << "\nError: Source File not found. Please check name!";
+		//Error: Source File not found. Please check name!
+		return -2;
 	}
+	return 1;
 }
 
-void moveDirectory(string sourceDirectory, string destinationDirectory) {
-	string sourceAbsolutePath(realpath(sourceDirectory.c_str(), NULL));
+int moveDirectory(string sourceDirectory, string destinationDirectory) {
 
-	string destinationAbsolutePath(realpath(destinationDirectory.c_str(), NULL));
+	if(isDirectoryExists(sourceDirectory.c_str())) {
+		if(isDirectoryExists(destinationDirectory.c_str())) {
+			string sourceAbsolutePath(realpath(sourceDirectory.c_str(), NULL));
 
-	int pos = sourceAbsolutePath.find_last_of('/');
+			string destinationAbsolutePath(realpath(destinationDirectory.c_str(), NULL));
 
-	string sourceName = sourceAbsolutePath.substr(pos+1);
+			int pos = sourceAbsolutePath.find_last_of('/');
 
-	index(realpath(sourceDirectory.c_str(), NULL));
+			string sourceName = sourceAbsolutePath.substr(pos+1);
 
-	string home(destinationAbsolutePath + '/' + sourceName);
+			index(realpath(sourceDirectory.c_str(), NULL));
 
-	mkdir(home.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+			string home(destinationAbsolutePath + '/' + sourceName);
 
-	for(int i = 0; i < directoryPaths.size(); i++) {
-		string temp = destinationAbsolutePath + directoryPaths[i].substr(pos);
-		mkdir(temp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+			if(!isDirectoryExists(home.c_str())) {
+				mkdir(home.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+
+				for(int i = 0; i < directoryPaths.size(); i++) {
+					string temp = destinationAbsolutePath + directoryPaths[i].substr(pos);
+					mkdir(temp.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+				}
+
+				for(int i = 0; i < filePaths.size(); i++) {
+					string temp = destinationAbsolutePath + filePaths[i].substr(pos);
+					copyFile(filePaths[i].c_str(), temp.c_str());
+				}
+
+				deleteDirectory(sourceAbsolutePath.c_str());
+			} else {
+				//Error: Destination Directory Exists. Please check name!
+				return -1;
+			}
+		} else {
+			//Error: Move to Directory does not exists.
+			return -2;
+		}
+	} else {
+		//Error: Move from Directory does not exists. 
+		return -3;
 	}
-
-	for(int i = 0; i < filePaths.size(); i++) {
-		string temp = destinationAbsolutePath + filePaths[i].substr(pos);
-		copyFile(filePaths[i].c_str(), temp.c_str());
-	}
-
-	deleteDirectory(sourceAbsolutePath.c_str());
+	return 1;
 }

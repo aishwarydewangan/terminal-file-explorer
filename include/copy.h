@@ -3,10 +3,10 @@
 
 #include "utils.h"
 
-void copyFile(const char *sourceFile, const char *destinationFile);
+int copyFile(const char *sourceFile, const char *destinationFile);
 
 void index(string sourceDirectory);
 
-void copyDirectory(string sourceDirectory, string destinationDirectory);
+int copyDirectory(string sourceDirectory, string destinationDirectory);
 
 #endif
