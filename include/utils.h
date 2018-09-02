@@ -46,6 +46,33 @@ inline string check(unsigned const char type) {
     return "None";
 }
 
+inline bool isFile(const char* path) {
+    struct stat buf;
+    stat(path, &buf);
+    return S_ISREG(buf.st_mode);
+}
+
+inline bool isDirectory(const char* path) {
+    struct stat buf;
+    stat(path, &buf);
+    return S_ISDIR(buf.st_mode);
+}
+
+inline vector<string> tokenizeString(string str, string delim) {
+	vector<string> v;
+	char *temp = new char[str.size()+1];
+	strcpy(temp, str.c_str());
+	char *token = strtok(temp, delim.c_str());
+	while (token != NULL)
+    {
+    	v.push_back(token);
+        token = strtok(NULL, delim.c_str());
+    }
+    delete [] temp;
+
+    return v;
+}
+
 inline string getPermissions(struct stat sb) {
 	string permissions;
 

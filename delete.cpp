@@ -1,22 +1,25 @@
 #include "include/delete.h"
 
-int deleteFile(const char *name) {
+void deleteFile(const char *name) {
+
+	printf("\e[26;1H");
+	printf("\e[K");
+
 	if(isFileExists(name)) {
 		if(remove(name) == 0){
-			//File Deleted Successfully
-			return 1;
+			printf("\e[26;1HSuccess: File Deleted.");
 		} else {
-			//Error: Cannot delete file. Please check file name!
-			return -1;
+			printf("\e[26;1HError: Cannot delete file. Please check file permissions.");
 		}
 	} else {
-		//Error: File not found. Please check file name!
-		return -2;
+		printf("\e[26;1HError: File not found. Please check file name.");
 	}
-	return 1;
 }
 
-int deleteDirectory(const char *dir) {
+void deleteDirectory(const char *dir) {
+
+	printf("\e[26;1H");
+	printf("\e[K");
 
 	if(isDirectoryExists(dir)) {
 		DIR *dp;
@@ -24,7 +27,7 @@ int deleteDirectory(const char *dir) {
 		struct stat statbuf;
 
 		if((dp = opendir(dir)) == NULL) { 
-			printf("Error: Unable to open directory! %s\n", dir);
+			printf("\e[26;1HError: Unable to open Directory.");
 			return; 
 		}
 
@@ -47,9 +50,9 @@ int deleteDirectory(const char *dir) {
 		rmdir(dir);
 
 		closedir(dp); 
+		
+		printf("\e[26;1HSuccess: Directory deleted.");
 	} else {
-		//Error: Delete Directory does not exists
-		return -1;
+		printf("\e[26;1HError: Directory does not exists.");
 	}
-	return 1;
 }

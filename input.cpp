@@ -36,40 +36,13 @@ void disableNonCanonicalMode() {
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldTerm);
 }
 
-bool isFile(const char* path) {
-    struct stat buf;
-    stat(path, &buf);
-    return S_ISREG(buf.st_mode);
-}
-
-bool isDirectory(const char* path) {
-    struct stat buf;
-    stat(path, &buf);
-    return S_ISDIR(buf.st_mode);
-}
-
-vector<string> tokenizeString(string str, string delim) {
-	vector<string> v;
-	char *temp = new char[str.size()+1];
-	strcpy(temp, str.c_str());
-	char *token = strtok(temp, delim.c_str());
-	while (token != NULL)
-    {
-    	v.push_back(token);
-        token = strtok(NULL, delim.c_str());
-    }
-    delete [] temp;
-
-    return v;
-}
-
-
 int main() {
 	enableNonCanonicalMode();
 	refreshScreen();
 	char c;
 	string s;
 	int leftPos = 1, i = 0;
+	
 	vector<string> v;
 
 	printf("\e[1;1H");
@@ -96,7 +69,7 @@ int main() {
     if(isDirectory(v[v.size()-1].c_str())) {
 
     	if(strcmp(v[v.size()-1].c_str(), "/") == 0)
-    	v[v.size()-1].pop_back();
+    		v[v.size()-1].pop_back();
 
 		if(strcmp(v[0].c_str(), "copy") == 0) {
 			for(int i = 1; i < v.size()-1; i++) {

@@ -2,7 +2,11 @@
 
 static vector<string> filePaths, directoryPaths;
 
-int copyFile(const char *sourceFile, const char *destinationFile) {
+void copyFile(const char *sourceFile, const char *destinationFile) {
+
+	printf("\e[26;1H");
+	printf("\e[K");
+
 	if(isFileExists(sourceFile)) {
 		if(!isFileExists(destinationFile)) {	
 			char buf[BUFSIZ];
@@ -17,15 +21,14 @@ int copyFile(const char *sourceFile, const char *destinationFile) {
 
 		    close(source);
 		    close(dest);
+
+		    printf("\e[26;1HSuccess: File copied.");
 		} else {
-			//Error: Destination File already exists. Please check name!
-			return -1;
+			printf("\e[26;1HError: Destination File already exists. Please check name.");
 		}
 	} else {
-		//Error: Source File not found. Please check name!
-		return -2;
+		printf("\e[26;1HError: Source File not found. Please check name.");
 	}
-	return 1;
 }
 
 void index(string sourceDirectory) {
@@ -58,7 +61,10 @@ void index(string sourceDirectory) {
 	closedir(dp); 
 }
 
-int copyDirectory(string sourceDirectory, string destinationDirectory) {
+void copyDirectory(string sourceDirectory, string destinationDirectory) {
+
+	printf("\e[26;1H");
+	printf("\e[K");
 
 	if(isDirectoryExists(sourceDirectory.c_str())) {
 		if(isDirectoryExists(destinationDirectory.c_str())) {
@@ -86,17 +92,15 @@ int copyDirectory(string sourceDirectory, string destinationDirectory) {
 					string temp = destinationAbsolutePath + filePaths[i].substr(pos);
 					copyFile(filePaths[i].c_str(), temp.c_str());
 				}
+
+				printf("\e[26;1HSuccess: Directory copied.");
 			} else {
-				//Error: Destination Directory Exists. Please check name!
-				return -1;
+				printf("\e[26;1HError: Destination Directory exists. Please check name.");
 			}
 		} else {
-			//Error: Copy to Directory does not exists.
-			return -2;
+			printf("\e[26;1HError: Destination Directory does not exists. Please check name.");
 		}
 	} else {
-		//Error: Copy from Directory does not exists. 
-		return -3;
+		printf("\e[26;1HError: Copy from Directory does not exists.  Please check name.");
 	}
-	return 1;
 }

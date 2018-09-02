@@ -1,4 +1,8 @@
 #include "include/list.h"
+#include "include/create.h"
+#include "include/copy.h"
+#include "include/move.h"
+#include "include/delete.h"
 
 struct termios oldTerm, newTerm;
 
@@ -82,6 +86,146 @@ void makeDirectoryBuffer(const char *path) {
 		str = str + ctime(&sb.st_mtime);
 		listBuffer.push_back(str);
    	}
+}
+
+void executeCommand(string ip) {
+	vector<string> cmdTokens = tokenizeString(ip, " ");
+
+	if(strcmp(cmdTokens[0].c_str(), "delete") == 0) {
+		for(int i = 1; i < cmdTokens.size(); i++) {
+			if(isFile(cmdTokens[i].c_str())) {
+				deleteFile(cmdTokens[i].c_str());
+			}
+			if(isDirectory(cmdTokens[i].c_str())) {
+				deleteDirectory(cmdTokens[i].c_str());
+			}
+		}
+		return;
+	}
+
+	if(isDirectory(cmdTokens[cmdTokens.size()-1].c_str())) {
+
+		if(strcmp(cmdTokens[cmdTokens.size()-1].c_str(), "/") == 0)
+			cmdTokens[cmdTokens.size()-1].pop_back();
+
+		if(strcmp(cmdTokens[0].c_str(), "copy") == 0) {
+			for(int i = 1; i < cmdTokens.size()-1; i++) {
+				if(isFile(cmdTokens[i].c_str())) {
+					vector<string> name = tokenizeString(cmdTokens[i], "/");
+
+					string basePath = cmdTokens[cmdTokens.size()-1];
+
+					string dest = basePath + "/" + name[name.size()-1];
+
+					copyFile(cmdTokens[i].c_str(), dest.c_str());
+				}
+
+				if(isDirectory(cmdTokens[i].c_str())) {
+					copyDirectory(cmdTokens[i], cmdTokens[cmdTokens.size()-1]);
+				}
+			}
+		}
+
+		if(strcmp(cmdTokens[0].c_str(), "move") == 0) {
+			for(int i = 1; i < cmdTokens.size()-1; i++) {
+				if(isFile(cmdTokens[i].c_str())) {
+					vector<string> name = tokenizeString(cmdTokens[i], "/");
+
+					string basePath = cmdTokens[cmdTokens.size()-1];
+
+					string dest = basePath + "/" + name[name.size()-1];
+
+					moveFile(cmdTokens[i].c_str(), dest.c_str());
+				}
+
+				if(isDirectory(cmdTokens[i].c_str())) {
+					moveDirectory(cmdTokens[i], cmdTokens[cmdTokens.size()-1]);
+				}
+			}
+		}
+
+		if(strcmp(cmdTokens[0].c_str(), "create_file") == 0) {
+			for(int i = 1; i < cmdTokens.size()-1; i++) {
+				string basePath = cmdTokens[cmdTokens.size()-1];
+
+				//if(strcmp(basePath.c_str(), ".") == 0)
+				//Complete this
+
+				string dest = basePath + "/" + cmdTokens[i];
+
+				createFile(dest.c_str());
+			}
+		}
+
+		if(strcmp(cmdTokens[0].c_str(), "create_dir") == 0) {
+			for(int i = 1; i < cmdTokens.size()-1; i++) {
+				string basePath = cmdTokens[cmdTokens.size()-1];
+
+				//if(strcmp(basePath.c_str(), ".") == 0)
+				//Complete this
+
+				string dest = basePath + "/" + cmdTokens[i];
+
+				createDirectory(dest.c_str());
+			}
+		}
+	} else {
+		printf("\e[26;1H");
+		printf("\e[K");
+		printf("\e[26;1HError: Destination is not a directory.");
+	}
+}
+
+void commandMode(string currentPath) {
+	printf("\e[28;1H:");
+
+	char c;
+
+	string ip;
+
+	int leftPos = 2;
+
+	bool execFlag = false;
+
+	while(1) {
+		c = getchar();
+
+		if(c == 27)
+			break;
+
+		if(c == 10) {
+			execFlag = true;
+		}
+
+		if(execFlag) {
+			executeCommand(ip);
+			printf("\e[28;1H");
+			printf("\e[K");
+			ip.clear();
+			leftPos = 2;
+			execFlag = false;
+			printf("\e[28;1H:");
+		} else {
+			printf("\e[28;%dH%c", leftPos, c);
+
+			ip.push_back(c);
+
+			leftPos++;
+
+			if(c == 127) {
+				printf("\e[28;1H");
+				printf("\e[K");
+				ip.pop_back();
+				ip.pop_back();
+				leftPos -= 2;
+				printf("\e[28;1H:%s", ip.c_str());
+				printf("\e[28;%dH", leftPos);
+			}
+		}
+	}
+
+	printf("\e[28;1H");
+	printf("\e[K");
 }
 
 void start(string path) {
@@ -247,11 +391,13 @@ void start(string path) {
 				}
 			}
 
+			if(c == 58) {
+				commandMode(forwardPath.top());
+			}
+
 			if(c == 'q') {
 				break;
 			}
-
-			//printf("\e[24;1HBackward Top: %d", backwardPath.size());
 
 			printf("\e[%d;1H", cursorPos);
 		}
