@@ -513,7 +513,13 @@ void start(string path) {
 
 				if(check(directoryContents[low+cursorPos-1]->d_type) == "Directory") {
 
-					if(low+cursorPos-1 != 0) {
+					bool look = true;
+
+					if(low+cursorPos-1 == 1 && strcmp(forwardPath.top().c_str(), root.c_str()) == 0) {
+						look = false;
+					}
+
+					if(low+cursorPos-1 != 0 && look) {
 
 						if(directoryContents[low+cursorPos-1]->d_name == "..") {
 							if(forwardPath.size() > 1) {
