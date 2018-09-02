@@ -11,7 +11,7 @@ struct termios oldTerm, newTerm;
 
 struct dirent **directoryContents;
 
-static int directoryNum;
+static int directoryNum, low, high, cursorPos, MAX_POS, MAX_CPOS;
 
 vector<string> listBuffer;
 
@@ -49,7 +49,7 @@ void printBuffer(int low, int high) {
 	refreshScreen();
 
 	printf("\e[1;1H");
-	
+
 	/*
 	vector<string> info(6);
 
@@ -306,7 +306,7 @@ void executeCommand(string ip) {
 	}
 }
 
-void commandMode(string currentPath) {
+void commandMode() {
 	printf("\e[28;1H:");
 
 	char c;
@@ -367,8 +367,6 @@ void start(string path) {
 		makeDirectoryBuffer(path.c_str());
 
 		forwardPath.push(path);
-
-		int low, high, cursorPos, MAX_POS, MAX_CPOS;
 
 		low = 0;
 
@@ -586,7 +584,27 @@ void start(string path) {
 			}
 
 			if(c == 58) {
-				commandMode(forwardPath.top());
+				commandMode();
+
+				string fullPath = forwardPath.top();
+
+				listBuffer.clear();
+
+				free(directoryContents);
+
+				makeDirectoryBuffer(fullPath.c_str());
+
+				low = 0;
+
+				high = (listBuffer.size()-1 < 19) ? listBuffer.size()-1 : 19;
+
+				cursorPos = 1;
+
+				MAX_POS = listBuffer.size()-1;
+
+				MAX_CPOS = (directoryNum < 20) ? directoryNum : 20;
+
+				printBuffer(low, high);
 			}
 
 			if(c == 'q') {
