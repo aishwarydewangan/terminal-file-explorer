@@ -648,7 +648,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if(argc > 2) {
-		cout << "\nError: More than one path provided. Exiting.";
+		cout << "\nError: More than one arguments provided. Exiting.";
 		return EXIT_FAILURE;
 	}
 
