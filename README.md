@@ -28,16 +28,17 @@ Following is the list of commands implemented as well as its syntax. The syntax 
 | ------ | ------ |
 | create_file | create_file <file_name> <destination_path> |
 | create_file | create_dir <dir_name> <destination_path> |
-| copy | copy <source(s))> <destination_directory> |
+| copy | copy <source(s)> <destination_directory> |
 | move | move <source(s)> <destination_directory> |
 | rename | rename <old_filename> <new_filename> |
 | delete | delete <source(s)> <destination_directory> |
 | snapshot | snapshot <folder> <dumpfile> |
 
 ### Developed By
-Aishwary Dewangan
-M.Tech. CSIS
-Roll No.: **2018202016**
-GitLab Handle: **aish_2018202016**
+Aishwary Dewangan <br/>
+M.Tech. CSIS <br/>
+Roll No.: **2018202016** <br/>
+GitLab Handle: **aish_2018202016** <br/>
+
 ### Credits
 Thank you all TA's @ OS. :)
