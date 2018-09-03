@@ -5,11 +5,12 @@ A simple terminal based file explorer having capabalities such as create file/di
 **Run this application on MacOS only.**
 
 ### Assumptions
-* Absolute Path is used in the project.
+* **Absolute Path** is used in the project.
 * To exit from the application, press **q** when in **Normal Mode**.
 * Terminal Size: 28x100 or Fullscreen
 * Delete takes multiple arguments. (It was not mentioned in the assignment description)
 * Status shows status of lastest executed command.
+* File Name/Directory Name should not have any spaces between them.
 
 ### Compile and Execute
 
