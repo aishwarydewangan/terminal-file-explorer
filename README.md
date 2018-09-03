@@ -11,6 +11,7 @@ A simple terminal based file explorer having capabalities such as create file/di
 * Delete takes multiple arguments. (It was not mentioned in the assignment description)
 * Status shows status of lastest executed command.
 * File Name/Directory Name should not have any spaces between them.
+* By default, application starts in Normal Mode.
 
 ### Compile and Execute
 
