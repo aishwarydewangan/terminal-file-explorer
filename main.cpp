@@ -128,6 +128,11 @@ void executeCommand(string ip) {
 
 	bool validCommand = false;
 
+	if(ip.size() == 0) {
+		printStatus("Error: Insufficient input.");
+		return;
+	}
+
 	vector<string> cmdTokens = tokenizeString(ip, " ");
 
 	if(strcmp(cmdTokens[0].c_str(), "search") == 0) {
