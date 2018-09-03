@@ -17,7 +17,7 @@ vector<string> listBuffer;
 
 stack<string> forwardPath, backwardPath;
 
-string root = "/Users/aishwary/Desktop/testing";
+string root;
 
 void refreshScreen() {
   write(STDOUT_FILENO, "\x1b[2J", 4);
@@ -618,7 +618,27 @@ void start(string path) {
 	}
 }
 
-int main() {
-	start(root);
+int main(int argc, char* argv[]) {
+	if(argc == 1) {
+		cout << "\nError: No path provided. Exiting.";
+		return EXIT_FAILURE;
+	}
+
+	if(argc == 2) {
+		string path(argv[1]);
+		if(isDirectory(path.c_str())) {
+			root = path;
+			start(root);
+		} else {
+			cout << "\nError: Path provided is not a directory. Exiting.";
+			return EXIT_FAILURE;
+		}
+	}
+
+	if(argc > 2) {
+		cout << "\nError: More than one path provided. Exiting.";
+		return EXIT_FAILURE;
+	}
+
 	return 0;
 }
